@@ -1,3 +1,5 @@
+//------mongodb connection creation :---------------
+
 const MongoClient = require('mongodb').MongoClient;
 const state = {
     db: null
@@ -5,7 +7,7 @@ const state = {
 module.exports.connect = function (done) {
 
     const url = "mongodb+srv://test_user:INhY5HHv4j5FkAFH@cluster0.omhgj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    const dbname = 'Books_library';
+    const dbname = 'ShoppingCart';
 
     MongoClient.connect(url, (err, data) => {
         if (err) {
@@ -14,9 +16,8 @@ module.exports.connect = function (done) {
         }
         state.db = data.db(dbname);
         console.log("DATABASE CONNECTED");
-        done()
+        
     })
-    done()
 }
 module.exports.get = function () {
     return state.db; 
