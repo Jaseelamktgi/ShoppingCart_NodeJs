@@ -1,41 +1,25 @@
 var express = require('express');
 const res = require('express/lib/response');
 var router = express.Router();
+var productHelpers=require('../helpers/product-helpers')
+var userHelpers=require('../helpers/user-helpers')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  let products=[
-    {
-      name:"Rich dad poor dad",
-      category:"Personal finance",
-      description:" It advocates the importance of financial literacy, financial independence and building wealth through investing in assets ",
-      price: 350,
-      Image:"https://images-na.ssl-images-amazon.com/images/I/81bsw6fnUiL.jpg"
-    },
-    {
-      name:"Rich dad poor dad",
-      category:"Personal finance",
-      description:" It advocates the importance of financial literacy, financial independence and building wealth through investing in assets ",
-      price: 350,
-      Image:"https://images-na.ssl-images-amazon.com/images/I/81bsw6fnUiL.jpg"
-    },
-    {
-      name:"Rich dad poor dad",
-      category:"Personal finance",
-      description:" It advocates the importance of financial literacy, financial independence and building wealth through investing in assets ",
-      price: 350,
-      Image:"https://images-na.ssl-images-amazon.com/images/I/81bsw6fnUiL.jpg"
-    },
-    {
-      name:"Rich dad poor dad",
-      category:"Personal finance",
-      description:" It advocates the importance of financial literacy, financial independence and building wealth through investing in assets ",
-      price: 350,
-      Image:"https://images-na.ssl-images-amazon.com/images/I/81bsw6fnUiL.jpg"
-    }
-  ]
-  res.render('index',{admin:false,products});
-
+  productHelpers.getAllProduct().then((products)=>{
+    res.render('index',{products});
+  });
+});
+router.get('/login',(req,res)=>{
+  res.render('user/login');
+});
+router.get('/signup',(req,res)=>{
+  res.render('user/signup');
+});
+router.post('/signup',(req,res)=>{
+  userHelpers.doSignup(req.body).then((response)=>{
+    console.log(response);
+  });
 });
 
 module.exports = router;

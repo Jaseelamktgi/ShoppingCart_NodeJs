@@ -1,0 +1,19 @@
+{{!---------- Product dispaly section :User-Side ---------}}
+<section>
+    <div class="container mt-5">
+        <div class="row">
+            {{#each products}}
+            <div class="col-md-3 pt-4">
+                <div class="card" style="width: 15rem; height:22rem;">
+                    <img class="card-img-top" src="/product-images/{{_id}}.jpg" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">{{name}}</h5>
+                        <p class="card-text">{{description}}</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</section>
