@@ -1,25 +1,55 @@
 var express = require('express');
 const res = require('express/lib/response');
 var router = express.Router();
-var productHelpers=require('../helpers/product-helpers')
-var userHelpers=require('../helpers/user-helpers')
+var productHelpers = require('../helpers/product-helpers')
+var userHelpers = require('../helpers/user-helpers')
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  productHelpers.getAllProduct().then((products)=>{
-    res.render('index',{products});
+/*--------------- GET home page ------------------ */
+router.get('/', function (req, res, next) {
+  let user = req.session.user;
+  console.log(user);
+  productHelpers.getAllProduct().then((products) => {
+    res.render('index', { products, user });
   });
 });
-router.get('/login',(req,res)=>{
+
+/*--------------- GET login page ----------------- */
+router.get('/login', (req, res) => {
   res.render('user/login');
 });
-router.get('/signup',(req,res)=>{
+
+/*--------------- GET signup page ----------------- */
+router.get('/signup', (req, res) => {
   res.render('user/signup');
 });
-router.post('/signup',(req,res)=>{
-  userHelpers.doSignup(req.body).then((response)=>{
+
+/*--------------- POST signup page ---------------- */
+router.post('/signup', (req, res) => {
+  //console.log(req.body)
+  userHelpers.doSignup(req.body).then((response) => {
     console.log(response);
   });
 });
+
+/*--------------- POST login page ----------------- */
+router.post('/login', (req, res) => {
+  userHelpers.doLogin(req.body).then((response) => {
+    if (response.status) {
+      req.session.loggedIn = true;
+      req.session.user = response.user;
+      res.redirect('/');
+    }
+    else {
+      res.redirect('/login');
+    }
+  });
+});
+
+/*-------------- Destroys the session --------------- */
+router.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/login');
+});
+
 
 module.exports = router;
