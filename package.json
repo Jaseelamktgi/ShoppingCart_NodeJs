@@ -17,5 +17,8 @@
     "http-errors": "~1.6.3",
     "mongodb": "^4.7.0",
     "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "handlebars": "^4.5.0"
   }
 }

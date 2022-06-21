@@ -4,6 +4,11 @@
         <h1 class="text-center mt-5">Login</h1>
         <form action="/login" method="post">
 
+            {{!-- invalid user  --}}
+            {{#if loginErr}}
+                <p class="error">{{loginErr}}</p>
+            {{/if}}
+            
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" name="Email" placeholder="Enter Email Address" class="form-control" required="">
