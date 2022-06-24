@@ -5,11 +5,14 @@
             {{#each products}}
             <div class="col-md-3 pt-4">
                 <div class="card" style="width: 15rem;">
-                    <img class="card-img-top" src="/product-images/{{_id}}.jpg" style="height:18rem;" alt="Card image cap">
+                    <img class="card-img-top" src="/product-images/{{_id}}.jpg" style="height:18rem;"
+                        alt="Card image cap">
                     <div class="card-body">
                         <h5 class="card-title">{{name}}</h5>
+                        <p class="card-title">Rs.{{price}}<p>
                         <p class="card-text">{{description}}</p>
-                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                        <button onclick="addToCart('{{_id}}')" id="cart-count" class="btn btn-primary">Add to
+                            Cart</button>
                     </div>
                 </div>
             </div>
@@ -17,3 +20,20 @@
         </div>
     </div>
 </section>
+<script>
+    /* ---------- AJAX: Add to cart ---------- */
+    function addToCart(productId) {
+        $.ajax({
+            url: '/add-to-cart/' + productId,
+            method: 'get',
+            success: (response) => {
+                //alert(response)   
+                 if(response.status){
+                    let count=$('#cart-count').html()
+                     count=parseInt(count)+1
+                     $('#cart-count').html(count)
+                 }
+            }
+        })
+    } 
+</script>
