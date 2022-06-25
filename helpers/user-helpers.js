@@ -88,7 +88,7 @@ module.exports = {
         })
     },
 
-    /*------------ User : Get Cart-Products ----------- */
+    /*---- User : Get Cart-Products(allProductDetails) ---- */
     getCartProducts: (userId) => {
         return new Promise(async (resolve, reject) => {
             let cartItems = await db.get().collection(collections.CART_COLLECTION).aggregate([
@@ -138,7 +138,7 @@ module.exports = {
                 }  
                  */
             ]).toArray()
-            console.log(cartItems[0].product)
+            //console.log(cartItems[0].product)
             resolve(cartItems)
         })
     },
@@ -198,8 +198,63 @@ module.exports = {
                 })
         })
 
-    }
+    },
 
+    /*------------ User : Get Cart-count  ------------ */
+    getCartCount: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let count = 0
+            let cart = await db.get().collection(collections.CART_COLLECTION).findOne({ user: objectId(userId) })
+            if (cart) {
+                count = cart.products.length
+            }
+            resolve(count)
+        })
+    },
+
+    /*---------- User : Total-Amount payable --------- */
+    getTotalAmount: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let total = await db.get().collection(collections.CART_COLLECTION).aggregate([
+                {
+                    $match: { user: objectId(userId) }
+                },
+                {
+                    $unwind: '$products'
+                },
+                {
+                    $project: {
+                        item: '$products.item',
+                        quantity: '$products.quantity'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: collections.PRODUCT_COLLECTION,
+                        localField: 'item',
+                        foreignField: '_id',
+                        as: 'product'
+                    }
+                },
+                {
+                    $project: {
+                        item: 1,
+                        quantity: 1,
+                        product: { $arrayElemAt: ['$product', 0] }
+                    }
+                },
+                {
+                    $group:{
+                        _id:null,
+                        total:{$sum:{$multiply:['$quantity','$product.price']}}
+                    }
+                }
+               
+            ]).toArray()
+            console.log(total[0].total)
+            resolve(total[0].total)
+        })
+    },
 
 
 }

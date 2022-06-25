@@ -1,0 +1,61 @@
+<section>
+    <div class="container">
+        <form action="/place-order" method="">
+            <div class="row">
+                <div class="col-md-6 mt-5 ">
+                    <h3 class="">Add delivery address</h3>
+                    <div class="form-group">
+                        <label for="address">Name :</label>
+                        <input type="text" placeholder="Name" class="form-control" name="name" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Phnoe :</label>
+                        <input type="number" placeholder="10-digit mobile number" class="form-control" name="phone"
+                            required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Pincode :</label>
+                        <input type="number" placeholder="Pincode" class="form-control" name="pincode" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address :</label>
+                        <input type="text" placeholder="Address (Area and Street)" class="form-control" name="address"
+                            required="">
+                    </div>
+                </div>
+                <div class="col-md-5 ml-5">
+                    <div class="container mt-5  border border-dark rounded">
+                        <div>
+                            <h5 class="mt-3 ">Total Amount Payable <b> ₹{{total}}</b> </h5>
+
+                        </div>
+
+                        <div class="payment ">
+                            <h6 class="">Payment Options :</h6>
+                            <hr>
+                            <label for="cod" class="radio-inline ">
+                                <input type="radio" name="paymentMethod" class="ml-2" value="COD"> Cash on Delivery
+                            </label>
+                            <hr><br>
+                            <label for="online" class="radio-inline ">
+                                <input type="radio" name="paymentMethod" class="ml-2" value="ONLINE"> Net Banking
+                            </label>
+                            <hr><br>
+                            <label for="atm" class="radio-inline ">
+                                <input type="radio" name="paymentMethod" class="ml-2" value="CARD"> Debit/Credit
+                            </label>
+                            <hr><br>
+                            <label for="upl" class="radio-inline ">
+                                <input type="radio" name="paymentMethod" class="ml-2" value="UPI"> UPI
+                            </label>
+                            <br>
+                            <input type="submit" value="Checkout" class="float-right btn btn-info">
+                            <br><br>
+                        </div>  
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

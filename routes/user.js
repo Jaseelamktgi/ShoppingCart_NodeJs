@@ -85,14 +85,14 @@ router.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-/*-----------------  View cart --------------------- */
+/*-----------------  View cart -------------------- */
 router.get('/cart', verifyLogin, async (req, res) => {
   let products = await userHelpers.getCartProducts(req.session.user._id)
   console.log(products)
   res.render('user/cart', { products, user: req.session.user });
 });
 
-/*------------------ Add to Cart ------------------- */
+/*------------------ Add to Cart ------------------ */
 router.get('/add-to-cart/:id', (req, res) => {
   console.log("API call")
   userHelpers.addToCart(req.params.id, req.session.user._id).then(() => {
@@ -101,7 +101,7 @@ router.get('/add-to-cart/:id', (req, res) => {
   });
 });
 
-/* ------------ change product quantity ------------ */
+/* ------------ change product quantity ----------- */
 router.post('/change-product-quantity',(req,res)=>{
   console.log(req.body)
   userHelpers.changeProductQuantity(req.body).then(()=>{
@@ -109,10 +109,16 @@ router.post('/change-product-quantity',(req,res)=>{
   });
 });
 
-/* ------------ Remove product from cart------------ */
+/* ------------ Remove product from cart----------- */
 router.post('/remove-product',(req,res)=>{
   userHelpers.removeProduct(req.body)
 })
 
+/* ----------------- Place Order ------------------ */
+router.get('/place-order',verifyLogin,async(req,res)=>{
+  let total=await userHelpers.getTotalAmount(req.session.user._id)
+  console.log(total)
+  res.render('user/place-order',{total})
+})
 
 module.exports = router;

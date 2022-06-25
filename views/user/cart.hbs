@@ -24,13 +24,13 @@
 
                     <td><img src="/product-images/{{product._id}}.jpg" style="width: 70px;height:70px" alt=""></td>
                     <td>{{product.name}}</td>
-                    <td>Rs.{{product.price}}</td>
+                    <td>₹{{product.price}}</td>
                     <td>
-                        <button class="cart-item-count mr-3"
-                            onclick="changeQuantity('{{_id}}','{{product._id}}',-1)">-</button>
+                        <button class="cart-item-count mr-3 btn-info "
+                            onclick="changeQuantity('{{_id}}','{{product._id}}',-1)"><b>-</b></button>
                         <span id="{{product._id}}">{{quantity}}</span>
-                        <button class="cart-item-count ml-3"
-                            onclick="changeQuantity('{{_id}}','{{product._id}}',1)">+</button>
+                        <button class="cart-item-count ml-3 btn-info" 
+                            onclick="changeQuantity('{{_id}}','{{product._id}}',1)"><b>+</b></button>
                     </td>
                     <td>
                         <a href="/remove-product" onclick="removeProduct('{{product._id}}','{{cartId}}')"
@@ -40,6 +40,12 @@
                 {{/each}}
             </tbody>
         </table>
+        <hr>
+        <div class="float-right">
+                <h4 class="float-lrft mt-4 mr-5 ">Total Payable : ₹{{total}}</h4>
+        <a href="/place-order" class="btn btn-success float-right mt-4 mr-5 font-weight-bold" style="width: 80%;">Place Order</a>
+        </div>
+        
     </div>
 </section>
 
