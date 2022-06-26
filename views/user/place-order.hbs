@@ -1,6 +1,6 @@
 <section>
     <div class="container">
-        <form action="/place-order" method="">
+        <form action="/place-order" method="" id="checkout-form">
             <div class="row">
                 <div class="col-md-6 mt-5 ">
                     <h3 class="">Add delivery address</h3>
@@ -12,6 +12,7 @@
                         <label for="address">Phnoe :</label>
                         <input type="number" placeholder="10-digit mobile number" class="form-control" name="phone"
                             required="">
+                            <input type="text" name="userId" id="" value="{{user._id}}" hidden>
                     </div>
                     <div class="form-group">
                         <label for="address">Pincode :</label>

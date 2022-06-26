@@ -10,7 +10,7 @@
                         <h5 class="card-title">{{name}}</h5>
                         <p class="card-title">₹{{price}}<p>
                         <p class="card-text">{{description}}</p>
-                        <button onclick="addToCart('{{_id}}')" id="cart-count" class="btn btn-primary">Add to
+                        <button onclick="addToCart('{{_id}}')" id="" class="btn btn-primary">Add to
                             Cart</button>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
     </div>
 </section>
 <script>
-    /* ---------- AJAX: Add to cart ---------- */
+    /* ---------- AJAX: Add to cart ---------- 
     function addToCart(productId) {
         $.ajax({
             url: '/add-to-cart/' + productId,

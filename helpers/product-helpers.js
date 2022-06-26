@@ -9,6 +9,7 @@ module.exports = {
     /* ------------ Admin : Add-product -------------- */
     addProduct: (product, callback) => {
         //console.log('product')
+        product.price = parseInt(product.price)
         db.get().collection('product').insertOne(product).then((data) => {
             //console.log(data)
             callback(data.insertedId)

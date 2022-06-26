@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const async = require('hbs/lib/async');
 const { status } = require('express/lib/response');
 const { reject } = require('bcrypt/promises');
+const { response } = require('express');
 var objectId = require('mongodb').ObjectId
 
 module.exports = {
@@ -157,7 +158,10 @@ module.exports = {
 
     /*-------- User : Product-quantity(Inc&Dec) ------- */
     changeProductQuantity: (details) => {
+        console.log("printed ", details)
         count = parseInt(details.count)
+        quantity = parseInt(details.quantity)
+
         console.log(details.cart, details.productId)
         return new Promise((resolve, reject) => {
             if (count == -1 && quantity == 1) {
@@ -173,7 +177,7 @@ module.exports = {
             }
             else {
                 db.get().collection(collections.CART_COLLECTION)
-                    .updateOne({ _id: objectId(details.cart), 'products.item': objectId(details.productId) },
+                    .updateOne({ _id: objectId(details.cart), 'products.item': objectId(details.product) },
                         {
                             $inc: { 'products.$.quantity': count }
                         }
@@ -244,17 +248,48 @@ module.exports = {
                     }
                 },
                 {
-                    $group:{
-                        _id:null,
-                        total:{$sum:{$multiply:['$quantity','$product.price']}}
+                    $group: {
+                        _id: null,
+                        total: { $sum: { $multiply: ['$quantity', '$product.price'] } }
                     }
                 }
-               
+
             ]).toArray()
-            console.log(total[0].total)
+            //console.log("TOTAL", total[0].total)
             resolve(total[0].total)
         })
     },
+    /*------------ User : Cart Product List ----------- */
+    getCartProductList: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let cart = await db.get().collection(collections.CART_COLLECTION)
+            console.log(cart)
+            resolve(cart.products)
+        })
+    },
 
+    /*------------ User : Place-Order ----------- */
+    placeOrder:(order,products,total)=>{
+        return new Promise((resolve,reject)=>{
+            console.log(order,products,total)
+            let status=order['payment-method']==='COD'?'Order Placed':'Pending'
+            let orderObj={
+                deliveryDetails:{
+                    name:order.name,
+                    mobile:order.phone,
+                    address:order.address,
+                    pincode:order.pincode
+                },
+                userId:objectId(order.userId),
+                paymentMethod:order['payment-method'],
+                products:products,
+                totalAmount:total,
+                status:status
+            }
+            db.get().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{
+                resolve(response)
+            })
+        })
+    }
 
 }
