@@ -69,8 +69,10 @@ $("#checkout-form").submit((event)=>{
         method:'post',
         data:$('#checkout-form').serialize(),
         success:(response)=>{
-            alert("Clicked")
-            alert(response)
+            // alert(response)
+            if(response.status){
+                location.href='\order-success'
+            }
         }
     })
 })

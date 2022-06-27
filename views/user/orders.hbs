@@ -1,0 +1,39 @@
+{{!--------- User : Orders Listing ---------}}
+<section>
+    <div class="container">
+
+        <table class="table mt-5">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Pincode</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each orders}}
+                <tr>
+                    <td>{{date}}</td>
+                    <td>{{deliveryDetails.address}}</td>
+                    <td>{{deliveryDetails.pincode}}</td>
+                    <td>{{deliveryDetails.mobile}}</td>
+                    <td>{{orders.paymentMethod}}</td>
+                    <td>₹{{orders.totalAmount}}</td>
+                    <td>{{orders.status}}</td>
+                    <td>
+                        <a href="/view-ordered-products/{{_id}}" class="btn btn-info">View Products</a>
+                    </td>
+
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+
+        </table>
+    </div>
+</section>

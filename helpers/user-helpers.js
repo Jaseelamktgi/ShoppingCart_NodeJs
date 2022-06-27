@@ -6,6 +6,13 @@ const { status } = require('express/lib/response');
 const { reject } = require('bcrypt/promises');
 const { response } = require('express');
 var objectId = require('mongodb').ObjectId
+// Razorpay instance creation
+const Razorpay = require('razorpay');
+
+var instance = new Razorpay({
+    key_id: 'rzp_test_YvyMMUHgr4kUjQ',
+    key_secret: 'ONN4K3ckPFc0DljxagVQL4i2',
+});
 
 module.exports = {
     /*------------ User : Signup Action -------------- */
@@ -262,34 +269,113 @@ module.exports = {
     /*------------ User : Cart Product List ----------- */
     getCartProductList: (userId) => {
         return new Promise(async (resolve, reject) => {
-            let cart = await db.get().collection(collections.CART_COLLECTION)
-            console.log(cart)
+            console.log(userId)
+            let cart = await db.get().collection(collections.CART_COLLECTION).findOne({ user: objectId(userId) })
+            console.log("CART RESPONSE|||||||", cart)
             resolve(cart.products)
         })
     },
 
     /*------------ User : Place-Order ----------- */
-    placeOrder:(order,products,total)=>{
-        return new Promise((resolve,reject)=>{
-            console.log(order,products,total)
-            let status=order['payment-method']==='COD'?'Order Placed':'Pending'
-            let orderObj={
-                deliveryDetails:{
-                    name:order.name,
-                    mobile:order.phone,
-                    address:order.address,
-                    pincode:order.pincode
+    placeOrder: (order, products, total) => {
+        console.log(products)
+        return new Promise((resolve, reject) => {
+            console.log(order, products, total)
+            let status = order['paymentMethod'] === 'COD' ? 'Order Placed' : 'Pending'
+            let orderObj = {
+                deliveryDetails: {
+                    name: order.name,
+                    mobile: order.phone,
+                    address: order.address,
+                    pincode: order.pincode
                 },
-                userId:objectId(order.userId),
-                paymentMethod:order['payment-method'],
-                products:products,
-                totalAmount:total,
-                status:status
+                userId: objectId(order.userId),
+                paymentMethod: order['paymentMethod'],
+                products: products,
+                totalAmount: total,
+                date: new Date(),
+                status: status
             }
-            db.get().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{
-                resolve(response)
+            db.get().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response) => {
+                db.get().collection(collections.CART_COLLECTION).deleteOne({ user: objectId(order.userId) })
+                console.log("order Id",response._id)
+                resolve(response._id)
             })
         })
-    }
+    },
 
+    /*---------- User : Get All-Orders ---------- */
+    getAllOrders: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            console.log("USER", userId)
+            let orders = await db.get().collection(collections.ORDER_COLLECTION)
+                .find({ userId: objectId(userId) }).toArray()
+            //console.log(orders)
+            resolve(orders)
+        })
+    },
+
+    /*---------- User : Get Order Products ---------- */
+    getOrderedProducts: (orderId) => {
+        return new Promise(async (resolve, reject) => {
+            let orderedItems = await db.get().collection(collections.ORDER_COLLECTION).aggregate([
+                {
+                    $match: { _id: objectId(orderId) }
+                },
+                {
+                    $unwind: '$products'
+                },
+                {
+                    $project: {
+                        item: '$products.item',
+                        quantity: '$products.quantity'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: collections.PRODUCT_COLLECTION,
+                        localField: 'item',
+                        foreignField: '_id',
+                        as: 'product'
+                    }
+                },
+                {
+                    $project: {
+                        item: 1,
+                        quantity: 1,
+                        product: { $arrayElemAt: ['$product', 0] }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: { $multiply: ['$quantity', '$product.price'] } }
+                    }
+                }
+            ]).toArray()
+            console.log(orderedItems)
+            resolve(orderedItems)
+        })
+
+    },
+
+    /*---------- User : Razorpay Integration ---------- */
+    generateRazorpay: (orderId,total) => {
+        console.log(orderId,total)
+        return new Promise((resolve, reject) => {
+            var options = {
+                amount: total,  // amount in the smallest currency unit
+                currency: "INR",
+                receipt: ""+orderId
+            };
+            instance.orders.create(options, function (err, order) {
+                if(err){
+                    console.log("ERROR",err)
+                }else{
+                console.log("New Order :",order);
+                resolve(order)
+                }
+            });
+        })
+    }
 }
