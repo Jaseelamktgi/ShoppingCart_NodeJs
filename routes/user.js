@@ -134,7 +134,7 @@ router.post('/place-order',async(req,res)=>{
   userHelpers.placeOrder(req.body,products,totalPrice).then((orderId)=>{
     console.log("ORDERID",orderId)
     if(req.body['paymentMethod']==='COD'){
-      res.json({status:true})
+      res.json({codSuccess:true})
     }else{
       userHelpers.generateRazorpay(orderId,totalPrice).then((response)=>{
         res.json(response)
@@ -166,4 +166,8 @@ router.get('/view-ordered-products/:id',async(req,res)=>{
   res.render('user/view-ordered-products',{user:req.session.user,products})
 })
 
+
+router.post('/verify-payment',(req,res)=>{
+  console.log(req.body)
+})
 module.exports = router;
