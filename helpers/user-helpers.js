@@ -298,8 +298,8 @@ module.exports = {
             }
             db.get().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then((response) => {
                 db.get().collection(collections.CART_COLLECTION).deleteOne({ user: objectId(order.userId) })
-                console.log("order Id",response._id)
-                resolve(response._id)
+                console.log("Order Id : ", response.insertedId)
+                resolve(response.insertedId)
             })
         })
     },
@@ -360,22 +360,40 @@ module.exports = {
     },
 
     /*---------- User : Razorpay Integration ---------- */
-    generateRazorpay: (orderId,total) => {
-        console.log(orderId,total)
+    generateRazorpay: (orderId, total) => {
+        console.log("OrderId&Total", orderId, total)
         return new Promise((resolve, reject) => {
             var options = {
                 amount: total,  // amount in the smallest currency unit
                 currency: "INR",
-                receipt: ""+orderId
+                receipt: "" + orderId
             };
             instance.orders.create(options, function (err, order) {
-                if(err){
-                    console.log("ERROR",err)
-                }else{
-                console.log("New Order :",order);
-                resolve(order)
+                if (err) {
+                    console.log("ERROR", err)
+                } else {
+                    console.log("New Order :", order);
+                    resolve(order)
                 }
             });
+        })
+    },
+
+     /*---------- User : verify Payment ---------- */
+     verifyPayment: (details) => {
+        return new Promise((resolve, reject) => {
+            const crypto = require('crypto')
+            const hmac = crypto.createHmac('sha256', 'ONN4K3ckPFc0DljxagVQL4i2')
+
+            hmac.update(details['payment[razorpay_order_id]'] + '|' + details['payment[razorpay_payment_id]'])
+            hmac = hmac.digest('hex')
+
+            if (hmac === details['payment[razorpay_signature]']) {
+                resolve()
+            } else {
+                reject(err)
+            }
+
         })
     }
 }

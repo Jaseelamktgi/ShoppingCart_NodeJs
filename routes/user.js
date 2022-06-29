@@ -140,9 +140,7 @@ router.post('/place-order',async(req,res)=>{
         res.json(response)
       })
     }
-
     //res.json({status:true})
-
   })
   console.log(req.body)
 })
@@ -166,8 +164,11 @@ router.get('/view-ordered-products/:id',async(req,res)=>{
   res.render('user/view-ordered-products',{user:req.session.user,products})
 })
 
-
+/* -------------- Verify Payment ---------------- */
 router.post('/verify-payment',(req,res)=>{
   console.log(req.body)
+  userHelpers.verifyPayment(req.body).then((response)=>{
+    
+  })
 })
 module.exports = router;
